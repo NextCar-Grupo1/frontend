@@ -1,0 +1,28 @@
+<section class="credits">
+  <header class="page-row">
+    <div><h1 class="page-title">Mis creditos simulados</h1><p class="page-lead">Historial preparado para que backend persista, edite y audite cada operacion del usuario.</p></div>
+    <a mat-flat-button color="primary" routerLink="/simulator"><mat-icon>add_circle</mat-icon>Nueva simulacion</a>
+  </header>
+  <div class="credits-list">
+    @for (simulation of simulations(); track simulation.id) {
+      <article class="panel credit-row">
+        <div class="credit-main">
+          <span class="status-chip" [class.approved]="simulation.status === 'Pre-aprobado'" [class.pending]="simulation.status === 'Pendiente'" [class.expired]="simulation.status === 'Expirado'">{{ simulation.status }}</span>
+          <h2>{{ simulation.vehicleName }}</h2>
+          <p>{{ simulation.entityName }} - creado el {{ simulation.createdAt | date: 'dd/MM/yyyy' }}</p>
+        </div>
+        <div class="credit-numbers">
+          <span><small>Cuota</small><strong>{{ simulation.result.monthlyInstallment | currency: simulation.currency : 'symbol-narrow' : '1.0-0' }}</strong></span>
+          <span><small>Financiado</small><strong>{{ simulation.result.financedAmount | currency: simulation.currency : 'symbol-narrow' : '1.0-0' }}</strong></span>
+          <span><small>TIR</small><strong>{{ simulation.result.irr * 100 | number: '1.1-1' }}%</strong></span>
+        </div>
+        <div class="row-actions">
+          <a mat-stroked-button [routerLink]="['/simulator', simulation.id]"><mat-icon>edit</mat-icon>Editar</a>
+          <a mat-stroked-button [routerLink]="['/results', simulation.id]"><mat-icon>visibility</mat-icon>Ver resultados</a>
+        </div>
+      </article>
+    } @empty {
+      <div class="panel empty"><mat-icon>account_balance_wallet</mat-icon><h2>No hay creditos simulados</h2><p>Cuando generes un cronograma, aparecera aqui con sus indicadores financieros.</p><a mat-flat-button color="primary" routerLink="/simulator">Crear simulacion</a></div>
+    }
+  </div>
+</section>

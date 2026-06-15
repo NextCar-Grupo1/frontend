@@ -1,0 +1,17 @@
+.support { display: grid; gap: 1.2rem; }
+.support-hero { min-height: 260px; display: grid; align-items: end; border-radius: 8px; padding: clamp(1rem, 3vw, 2rem); color: #fff; background: linear-gradient(90deg, rgba(12,27,51,.94), rgba(12,27,51,.48)), url('https://images.unsplash.com/photo-1554224155-6726b3ff858f?auto=format&fit=crop&w=1500&q=80') center / cover; }
+.support-hero .page-title, .support-hero .page-lead { color: #fff; }
+.support-hero .page-lead { color: rgba(255,255,255,.78); }
+.eyebrow { color: #9df0c4; font-size: .78rem; font-weight: 800; text-transform: uppercase; }
+.support-grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 1rem; }
+.topics-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+.topic-card, .legal-card, .contact-card { padding: 1rem; }
+.topic-card mat-icon, .section-title mat-icon, .contact-row mat-icon { color: var(--nextcar-emerald); }
+.topic-card h2, .contact-card h2 { margin: .75rem 0 .4rem; color: var(--nextcar-navy); font-size: 1.05rem; }
+.topic-card p, .legal-card p, .legal-card li, .contact-card p, .contact-row span { color: var(--nextcar-muted); line-height: 1.6; }
+.legal-card { grid-column: 1 / -1; }
+.section-title { display: flex; align-items: center; gap: .55rem; }
+.contact-card { display: grid; align-content: start; gap: .9rem; }
+.contact-row { display: flex; align-items: flex-start; gap: .75rem; }
+.contact-row strong { display: block; color: var(--nextcar-navy); }
+@media (max-width: 980px) { .support-grid, .topics-grid { grid-template-columns: 1fr; } .legal-card { grid-column: auto; } }

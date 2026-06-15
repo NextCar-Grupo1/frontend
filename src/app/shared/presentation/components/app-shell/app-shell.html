@@ -1,0 +1,82 @@
+<mat-sidenav-container class="shell">
+  <mat-sidenav #drawer class="sidebar" [mode]="isMobile() ? 'over' : 'side'" [opened]="!isMobile()">
+    <div class="brand">
+      <div class="brand-mark">
+        <mat-icon>directions_car</mat-icon>
+      </div>
+      <div>
+        <strong>NextCar</strong>
+        <span>Compra Inteligente</span>
+      </div>
+    </div>
+
+    <nav class="nav-list" aria-label="Secciones principales">
+      @for (item of navItems; track item.route) {
+        <a
+          class="nav-link"
+          [routerLink]="item.route"
+          routerLinkActive="active"
+          [routerLinkActiveOptions]="{ exact: item.route === '/dashboard' }"
+          (click)="isMobile() && drawer.close()"
+        >
+          <mat-icon>{{ item.icon }}</mat-icon>
+          <span>{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="sidebar-user">
+      <span class="avatar"
+        >{{ user()?.firstName?.charAt(0) ?? 'N' }}{{ user()?.lastName?.charAt(0) ?? 'C' }}</span
+      >
+      <div>
+        <strong>{{ user()?.firstName ?? 'Usuario' }} {{ user()?.lastName ?? '' }}</strong>
+        <small>{{ user()?.email }}</small>
+      </div>
+    </div>
+  </mat-sidenav>
+
+  <mat-sidenav-content class="content">
+    <mat-toolbar class="toolbar">
+      @if (isMobile()) {
+        <button mat-icon-button type="button" aria-label="Abrir menu" (click)="drawer.toggle()">
+          <mat-icon>menu</mat-icon>
+        </button>
+      }
+      <div class="toolbar-title">
+        <span>Compra Inteligente</span>
+        <small>Simulacion vehicular transparente</small>
+      </div>
+      <span class="spacer"></span>
+      <button mat-stroked-button routerLink="/simulator">
+        <mat-icon>add_circle</mat-icon>
+        Nueva simulacion
+      </button>
+      <button mat-icon-button type="button" matTooltip="Notificaciones">
+        <mat-icon>notifications</mat-icon>
+      </button>
+      <button mat-icon-button type="button" [matMenuTriggerFor]="profileMenu" matTooltip="Perfil">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      <mat-menu #profileMenu="matMenu">
+        <button mat-menu-item routerLink="/profile">
+          <mat-icon>person</mat-icon>
+          <span>Mi perfil</span>
+        </button>
+        <button mat-menu-item type="button" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+          <span>Cerrar sesion</span>
+        </button>
+      </mat-menu>
+    </mat-toolbar>
+
+    <main class="page-frame">
+      <router-outlet />
+    </main>
+
+    <footer class="footer">
+      <span>NextCar</span>
+      <span>Todos los derechos reservados.</span>
+    </footer>
+  </mat-sidenav-content>
+</mat-sidenav-container>

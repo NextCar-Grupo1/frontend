@@ -1,0 +1,143 @@
+<section class="register-page">
+  <aside class="register-story">
+    <div class="story-content">
+      <div class="brand-row">
+        <span><mat-icon>directions_car</mat-icon></span>
+        <strong>NextCar</strong>
+      </div>
+      <h1>Crea tu perfil para evaluar tu credito vehicular.</h1>
+      <p>
+        Validamos requisitos base como edad, ingreso mensual y aceptacion de consulta crediticia
+        para ordenar el proceso.
+      </p>
+      <div class="story-grid">
+        <div>
+          <mat-icon>verified</mat-icon>
+          <strong>Elegibilidad</strong>
+          <span>Mayor de edad e ingreso minimo.</span>
+        </div>
+        <div>
+          <mat-icon>speed</mat-icon>
+          <strong>Aprobacion veloz</strong>
+          <span>Datos listos para evaluar el credito.</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <main class="register-form">
+    <form class="panel" [formGroup]="form" (ngSubmit)="submit()">
+      <div>
+        <span class="eyebrow">Registro</span>
+        <h2>Completa tus datos</h2>
+        <p>
+          Esta informacion queda preparada para que el backend real gestione clientes y solicitudes.
+        </p>
+      </div>
+
+      <div class="form-grid">
+        <mat-form-field appearance="outline">
+          <mat-label>Nombres</mat-label>
+          <input matInput formControlName="firstName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Apellidos</mat-label>
+          <input matInput formControlName="lastName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Tipo de documento</mat-label>
+          <mat-select formControlName="documentType">
+            <mat-option value="DNI">DNI</mat-option>
+            <mat-option value="CE">CE</mat-option>
+            <mat-option value="PASSPORT">Pasaporte</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Numero de documento</mat-label>
+          <input matInput formControlName="documentNumber" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Fecha de nacimiento</mat-label>
+          <input matInput type="date" formControlName="birthDate" [max]="maxBirthDate" />
+          @if (form.controls.birthDate.hasError('minimumAge')) {
+            <mat-error>Debes ser mayor de edad para solicitar el credito.</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Correo electronico</mat-label>
+          <input matInput type="email" formControlName="email" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Telefono celular</mat-label>
+          <input matInput formControlName="phone" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Direccion</mat-label>
+          <input matInput formControlName="address" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Distrito</mat-label>
+          <input matInput formControlName="district" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Ciudad</mat-label>
+          <input matInput formControlName="city" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Ingreso mensual bruto</mat-label>
+          <input matInput type="number" formControlName="grossMonthlyIncome" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Tipo de empleo</mat-label>
+          <mat-select formControlName="employmentType">
+            <mat-option value="Dependiente">Dependiente</mat-option>
+            <mat-option value="Independiente">Independiente</mat-option>
+            <mat-option value="Mixto">Mixto</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Ocupacion / Cargo</mat-label>
+          <input matInput formControlName="occupation" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Empleador (opcional)</mat-label>
+          <input matInput formControlName="employer" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Contrasena</mat-label>
+          <input matInput type="password" formControlName="password" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Confirmar contrasena</mat-label>
+          <input matInput type="password" formControlName="confirmPassword" />
+        </mat-form-field>
+
+        <mat-checkbox class="full-row" formControlName="terms">
+          Acepto terminos, politica de privacidad y consulta de historial crediticio.
+        </mat-checkbox>
+      </div>
+
+      <button mat-flat-button color="primary" type="submit" [disabled]="loading">
+        <mat-icon>person_add</mat-icon>
+        Registrarme
+      </button>
+
+      <p class="switch">Ya tienes cuenta? <a routerLink="/auth/login">Inicia sesion aqui</a></p>
+    </form>
+  </main>
+</section>

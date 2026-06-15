@@ -1,0 +1,63 @@
+@if (isLoading()) {
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+} @else if (errorMessage()) {
+  <section class="panel missing-result">
+    <mat-icon>error_outline</mat-icon>
+    <h1 class="section-title">Resultado no disponible</h1>
+    <p>{{ errorMessage() }}</p>
+    <div class="actions">
+      <a mat-flat-button color="primary" routerLink="/simulator"><mat-icon>add_circle</mat-icon>Nueva simulacion</a>
+      <a mat-stroked-button routerLink="/credits"><mat-icon>list_alt</mat-icon>Mis creditos</a>
+    </div>
+  </section>
+} @else if (simulation(); as item) {
+  <section class="results">
+    <header class="results-header">
+      <div>
+        <span class="eyebrow">Resultado de simulacion</span>
+        <h1 class="page-title">{{ item.vehicleName }}</h1>
+        <p class="page-lead">{{ item.entityName }} - {{ item.termMonths }} meses - Metodo frances vencido ordinario.</p>
+      </div>
+      <div class="actions">
+        <button mat-stroked-button type="button" (click)="printReport()"><mat-icon>picture_as_pdf</mat-icon>Exportar PDF</button>
+        <a mat-stroked-button [routerLink]="['/simulator', item.id]"><mat-icon>edit</mat-icon>Editar</a>
+        <a mat-flat-button color="primary" routerLink="/simulator"><mat-icon>add_circle</mat-icon>Nueva simulacion</a>
+      </div>
+    </header>
+
+    <div class="metrics-grid">
+      <article class="metric-card"><span class="metric-label"><mat-icon>payments</mat-icon> Cuota mensual total</span><div class="metric-value">{{ item.result.monthlyInstallment | currency: item.currency : 'symbol-narrow' : '1.2-2' }}</div><div class="metric-note">Incluye seguros y comisiones.</div></article>
+      <article class="metric-card"><span class="metric-label"><mat-icon>account_balance</mat-icon> Monto financiado</span><div class="metric-value">{{ item.result.financedAmount | currency: item.currency : 'symbol-narrow' : '1.2-2' }}</div><div class="metric-note">Cuota inicial: {{ item.result.downPaymentAmount | currency: item.currency : 'symbol-narrow' : '1.0-0' }}</div></article>
+      <article class="metric-card"><span class="metric-label"><mat-icon>verified</mat-icon> Probabilidad de aprobacion</span><div class="metric-value approval">{{ item.result.approvalScore | number: '1.0-0' }}%</div><div class="metric-note">Resultado preliminar de frontend.</div></article>
+    </div>
+
+    <section class="profit-grid">
+      <article class="panel profit-card"><div><span>Valor Actual Neto (VAN)</span><strong [class.negative]="item.result.npv < 0">{{ item.result.npv | currency: item.currency : 'symbol-narrow' : '1.2-2' }}</strong><small>Desde la perspectiva del deudor con tasa mensual efectiva.</small></div><mat-icon>trending_up</mat-icon></article>
+      <article class="panel profit-card"><div><span>Tasa Interna de Retorno (TIR)</span><strong>{{ item.result.irr * 100 | number: '1.1-2' }}%</strong><small>Indicador anualizado estimado.</small></div><mat-icon>show_chart</mat-icon></article>
+      <article class="panel profit-card"><div><span>TCEA estimada</span><strong>{{ item.result.effectiveAnnualCostRate * 100 | number: '1.1-2' }}%</strong><small>Costo anual con seguros y costos recurrentes.</small></div><mat-icon>percent</mat-icon></article>
+      <article class="panel profit-card"><div><span>Tasa efectiva mensual (TEM)</span><strong>{{ item.result.effectiveMonthlyRate * 100 | number: '1.2-3' }}%</strong><small>Tasa mensual aplicada al cronograma de 30 dias.</small></div><mat-icon>calendar_month</mat-icon></article>
+    </section>
+
+    <section class="panel schedule-panel">
+      <div class="section-header">
+        <div><h2 class="section-title">Cronograma de pagos</h2><p>Fechas mensuales, saldo insoluto, amortizacion, interes, seguros y cuota total.</p></div>
+        <span class="status-chip" [class.approved]="item.status === 'Pre-aprobado'" [class.pending]="item.status === 'Pendiente'">{{ item.status }}</span>
+      </div>
+      <div class="table-wrap">
+        <table mat-table [dataSource]="item.result.schedule">
+          <ng-container matColumnDef="installmentNumber"><th mat-header-cell *matHeaderCellDef>Cuota</th><td mat-cell *matCellDef="let row">{{ row.installmentNumber }}</td></ng-container>
+          <ng-container matColumnDef="dueDate"><th mat-header-cell *matHeaderCellDef>Fecha</th><td mat-cell *matCellDef="let row">{{ row.dueDate | date: 'dd/MM/yyyy' }}</td></ng-container>
+          <ng-container matColumnDef="openingBalance"><th mat-header-cell *matHeaderCellDef>Capital vivo</th><td mat-cell *matCellDef="let row">{{ row.openingBalance | currency: item.currency : 'symbol-narrow' : '1.2-2' }}</td></ng-container>
+          <ng-container matColumnDef="amortization"><th mat-header-cell *matHeaderCellDef>Amortizacion</th><td mat-cell *matCellDef="let row">{{ row.amortization | currency: item.currency : 'symbol-narrow' : '1.2-2' }}</td></ng-container>
+          <ng-container matColumnDef="cumulativeAmortization"><th mat-header-cell *matHeaderCellDef>Capital amortizado</th><td mat-cell *matCellDef="let row">{{ row.cumulativeAmortization | currency: item.currency : 'symbol-narrow' : '1.2-2' }}</td></ng-container>
+          <ng-container matColumnDef="interest"><th mat-header-cell *matHeaderCellDef>Interes</th><td mat-cell *matCellDef="let row">{{ row.interest | currency: item.currency : 'symbol-narrow' : '1.2-2' }}</td></ng-container>
+          <ng-container matColumnDef="insurance"><th mat-header-cell *matHeaderCellDef>Seguros</th><td mat-cell *matCellDef="let row">{{ (row.debtReliefInsurance + row.vehicleInsurance) | currency: item.currency : 'symbol-narrow' : '1.2-2' }}</td></ng-container>
+          <ng-container matColumnDef="totalPayment"><th mat-header-cell *matHeaderCellDef>Cuota total</th><td mat-cell *matCellDef="let row"><strong>{{ row.totalPayment | currency: item.currency : 'symbol-narrow' : '1.2-2' }}</strong></td></ng-container>
+          <ng-container matColumnDef="closingBalance"><th mat-header-cell *matHeaderCellDef>Saldo final</th><td mat-cell *matCellDef="let row">{{ row.closingBalance | currency: item.currency : 'symbol-narrow' : '1.2-2' }}</td></ng-container>
+          <tr mat-header-row *matHeaderRowDef="columns"></tr>
+          <tr mat-row *matRowDef="let row; columns: columns"></tr>
+        </table>
+      </div>
+    </section>
+  </section>
+}

@@ -1,0 +1,195 @@
+<section class="simulator">
+  <header class="page-header">
+    <div>
+      <h1 class="page-title">
+        {{
+          simulationBeingEdited() ? 'Editar simulacion vehicular' : 'Simulador de credito vehicular'
+        }}
+      </h1>
+      <p class="page-lead">
+        Configura moneda, banco, cuota inicial, tasa y periodos de gracia para generar un cronograma
+        por metodo frances.
+      </p>
+    </div>
+  </header>
+
+  <div class="simulator-grid">
+    <form class="form-stack" [formGroup]="form" (ngSubmit)="submit()">
+      <section class="panel form-panel">
+        <h2 class="section-title"><mat-icon>directions_car</mat-icon> Datos del vehiculo</h2>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Vehiculo</mat-label>
+            <mat-select formControlName="vehicleId" (selectionChange)="onVehicleChange()">
+              @for (vehicle of vehicles(); track vehicle.id) {
+                <mat-option [value]="vehicle.id"
+                  >{{ vehicle.brand }} {{ vehicle.model }} {{ vehicle.year }}</mat-option
+                >
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Precio del vehiculo</mat-label>
+            <input matInput type="number" formControlName="vehiclePrice" />
+          </mat-form-field>
+          <mat-button-toggle-group formControlName="currency" aria-label="Moneda">
+            <mat-button-toggle value="PEN">Soles (S/)</mat-button-toggle>
+            <mat-button-toggle value="USD">Dolares ($)</mat-button-toggle>
+          </mat-button-toggle-group>
+        </div>
+      </section>
+
+      <section class="panel form-panel">
+        <h2 class="section-title"><mat-icon>payments</mat-icon> Condiciones del credito</h2>
+        <div class="range-field">
+          <div>
+            <strong>Cuota inicial</strong>
+            <span
+              >{{ form.controls.downPaymentPercent.value }}% -
+              {{
+                (form.controls.vehiclePrice.value * form.controls.downPaymentPercent.value) / 100
+                  | currency: form.controls.currency.value : 'symbol-narrow' : '1.0-0'
+              }}</span
+            >
+          </div>
+          <input type="range" min="20" max="80" step="1" formControlName="downPaymentPercent" />
+          <small>Minimo 20% segun la regla definida en el informe.</small>
+        </div>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Plazo del credito</mat-label>
+            <mat-select formControlName="termMonths">
+              <mat-option [value]="24">2 anos (24 meses)</mat-option>
+              <mat-option [value]="36">3 anos (36 meses)</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Fecha de inicio</mat-label>
+            <input matInput type="date" formControlName="startDate" [min]="today" />
+            @if (form.controls.startDate.hasError('dateBeforeToday')) {
+              <mat-error>No puede ser anterior a la fecha actual.</mat-error>
+            }
+          </mat-form-field>
+        </div>
+      </section>
+
+      <section class="panel form-panel">
+        <h2 class="section-title"><mat-icon>percent</mat-icon> Configuracion de tasa</h2>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Entidad financiera</mat-label>
+            <mat-select formControlName="financialEntityId" (selectionChange)="onEntityChange()">
+              @for (entity of entities(); track entity.name) {
+                <mat-option [value]="entity.name">{{ entity.displayName }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo de tasa</mat-label>
+            <mat-select formControlName="rateType">
+              <mat-option value="Efectiva">Tasa efectiva</mat-option>
+              <mat-option value="Nominal">Tasa nominal</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>{{
+              requiresCapitalization() ? 'Tasa nominal anual (%)' : 'Tasa efectiva anual (%)'
+            }}</mat-label>
+            <input matInput type="number" formControlName="annualRate" />
+          </mat-form-field>
+          @if (requiresCapitalization()) {
+            <mat-form-field appearance="outline">
+              <mat-label>Capitalizacion</mat-label>
+              <mat-select formControlName="capitalization">
+                <mat-option value="Mensual">Mensual</mat-option>
+                <mat-option value="Bimestral">Bimestral</mat-option>
+                <mat-option value="Trimestral">Trimestral</mat-option>
+                <mat-option value="Semestral">Semestral</mat-option>
+                <mat-option value="Anual">Anual</mat-option>
+              </mat-select>
+              <mat-hint>Solo se usa para convertir tasas nominales.</mat-hint>
+            </mat-form-field>
+          }
+        </div>
+      </section>
+
+      <section class="panel form-panel">
+        <h2 class="section-title">
+          <mat-icon>hourglass_empty</mat-icon> Periodos de gracia y costos
+        </h2>
+        <div class="form-grid">
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo de periodo</mat-label>
+            <mat-select formControlName="gracePeriodType">
+              <mat-option value="Sin gracia">Sin gracia</mat-option>
+              <mat-option value="Parcial">Gracia parcial</mat-option>
+              <mat-option value="Total">Gracia total</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline"
+            ><mat-label>Meses de gracia</mat-label
+            ><input matInput type="number" formControlName="graceMonths"
+          /></mat-form-field>
+          <mat-form-field appearance="outline"
+            ><mat-label>Seguro desgravamen (%)</mat-label
+            ><input matInput type="number" formControlName="debtReliefInsuranceRate"
+          /></mat-form-field>
+          <mat-form-field appearance="outline"
+            ><mat-label>Seguro vehicular mensual</mat-label
+            ><input matInput type="number" formControlName="vehicleInsuranceMonthly" /><mat-hint
+              >Calculado desde la tasa de riesgo de la entidad.</mat-hint
+            ></mat-form-field
+          >
+          <mat-form-field appearance="outline" class="full-row"
+            ><mat-label>Costos adicionales mensuales</mat-label
+            ><input matInput type="number" formControlName="additionalMonthlyCosts"
+          /></mat-form-field>
+        </div>
+      </section>
+
+      <button mat-flat-button color="primary" type="submit">
+        <mat-icon>{{ simulationBeingEdited() ? 'save' : 'table_view' }}</mat-icon>
+        {{ simulationBeingEdited() ? 'Guardar cambios' : 'Calcular cronograma' }}
+      </button>
+    </form>
+
+    <aside class="summary-card">
+      <div
+        class="vehicle-preview"
+        [style.backgroundImage]="'url(' + (selectedVehicle()?.imageUrl ?? '') + ')'"
+      ></div>
+      <h2>Resumen de simulacion</h2>
+      <div class="summary-row">
+        <span>Monto a financiar</span
+        ><strong>{{
+          preview()?.financedAmount ?? 0
+            | currency: form.controls.currency.value : 'symbol-narrow' : '1.0-0'
+        }}</strong>
+      </div>
+      <div class="summary-row">
+        <span>TEM efectiva</span
+        ><strong>{{ (preview()?.effectiveMonthlyRate ?? 0) * 100 | number: '1.2-3' }}%</strong>
+      </div>
+      <div class="summary-row">
+        <span>TCEA estimada</span
+        ><strong>{{ (preview()?.effectiveAnnualCostRate ?? 0) * 100 | number: '1.1-2' }}%</strong>
+      </div>
+      <div class="highlight">
+        <span>Cuota mensual estimada</span
+        ><strong>{{
+          preview()?.monthlyInstallment ?? 0
+            | currency: form.controls.currency.value : 'symbol-narrow' : '1.0-0'
+        }}</strong>
+      </div>
+      <div class="approval">
+        <span>Probabilidad preliminar</span
+        ><strong>{{ preview()?.approvalScore ?? 0 | number: '1.0-0' }}%</strong
+        ><mat-progress-bar
+          mode="determinate"
+          [value]="preview()?.approvalScore ?? 0"
+        ></mat-progress-bar>
+      </div>
+      <p>Los valores son referenciales y quedan listos para validacion crediticia desde backend.</p>
+    </aside>
+  </div>
+</section>

@@ -1,0 +1,26 @@
+.simulator { display: grid; gap: 1.25rem; }
+.page-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 1rem; }
+.simulator-grid { display: grid; grid-template-columns: minmax(0, 1fr) 360px; align-items: start; gap: 1rem; }
+.form-stack { display: grid; gap: 1rem; }
+.form-panel { padding: 1.1rem; }
+.section-title { display: flex; align-items: center; gap: .55rem; margin-bottom: 1rem; }
+.section-title mat-icon { color: var(--nextcar-emerald); }
+mat-button-toggle-group { grid-column: 1 / -1; width: max-content; max-width: 100%; }
+.range-field { display: grid; gap: .5rem; margin-bottom: 1rem; }
+.range-field div { display: flex; justify-content: space-between; gap: 1rem; color: var(--nextcar-navy); }
+.range-field span, .range-field small { color: var(--nextcar-muted); }
+input[type='range'] { accent-color: var(--nextcar-emerald); }
+.summary-card { position: sticky; top: 92px; overflow: hidden; border-radius: 8px; background: var(--nextcar-navy); color: #fff; box-shadow: var(--nextcar-shadow); }
+.vehicle-preview { min-height: 160px; background-color: #dbe5ef; background-size: cover; background-position: center; }
+.summary-card h2, .summary-card p, .summary-row, .highlight, .approval { margin-right: 1.2rem; margin-left: 1.2rem; }
+.summary-card h2 { margin-top: 1.2rem; font-size: 1.25rem; }
+.summary-row, .highlight { display: flex; justify-content: space-between; gap: 1rem; padding: .9rem 0; border-top: 1px solid rgba(255,255,255,.12); }
+.summary-row span, .highlight span, .approval span, .summary-card p { color: rgba(255,255,255,.7); }
+.highlight { display: grid; border-radius: 8px; padding: 1rem; background: rgba(24,166,106,.18); }
+.highlight strong { color: #9df0c4; font-size: 2rem; }
+.approval { display: grid; gap: .45rem; margin-top: 1rem; }
+.approval strong { color: var(--nextcar-amber); font-size: 1.4rem; }
+.summary-card p { padding-bottom: 1.2rem; font-size: .82rem; line-height: 1.55; }
+button[type='submit'] { min-height: 50px; justify-self: start; }
+@media (max-width: 980px) { .simulator-grid { grid-template-columns: 1fr; } .summary-card { position: static; } }
+@media (max-width: 620px) { mat-button-toggle-group { width: 100%; } }

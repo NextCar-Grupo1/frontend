@@ -1,0 +1,112 @@
+<section class="dashboard">
+  <div class="hero-band">
+    <div>
+      <span class="eyebrow">Panel financiero</span>
+      <h1 class="page-title">
+        Hola, {{ user()?.firstName }} {{ user()?.lastName }}. Tu proximo auto empieza con numeros
+        claros.
+      </h1>
+      <p class="page-lead">
+        Gestiona simulaciones, compara entidades y revisa tus datos de cliente.
+      </p>
+      <div class="hero-actions">
+        <a mat-flat-button color="accent" routerLink="/simulator"
+          ><mat-icon>calculate</mat-icon>Nueva simulacion</a
+        >
+        <a mat-stroked-button routerLink="/support"><mat-icon>school</mat-icon>Conceptos clave</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="metrics-grid">
+    <article class="metric-card">
+      <span class="metric-label"><mat-icon>receipt_long</mat-icon> Simulaciones guardadas</span>
+      <div class="metric-value">{{ simulations().length }}</div>
+      <div class="metric-note">Incluye estados pendientes y pre-aprobados.</div>
+    </article>
+    <article class="metric-card">
+      <span class="metric-label"><mat-icon>account_balance</mat-icon> Monto financiado</span>
+      <div class="metric-value">
+        {{ totalFinanced() | currency: 'PEN' : 'symbol-narrow' : '1.0-0' }}
+      </div>
+      <div class="metric-note">Suma de escenarios activos del usuario.</div>
+    </article>
+    <article class="metric-card">
+      <span class="metric-label"><mat-icon>verified</mat-icon> Probabilidad promedio</span>
+      <div class="metric-value">{{ averageApproval() | number: '1.0-0' }}%</div>
+      <div class="metric-note">Lectura preliminar basada en capacidad de pago.</div>
+    </article>
+  </div>
+
+  <div class="content-grid">
+    <section class="panel saved-panel">
+      <div class="section-header">
+        <h2 class="section-title">Simulaciones recientes</h2>
+        <a routerLink="/credits">Ver todas <mat-icon>arrow_forward</mat-icon></a>
+      </div>
+
+      <div class="simulation-grid">
+        @for (simulation of simulations().slice(0, 3); track simulation.id) {
+          <article class="simulation-card">
+            <div
+              class="card-image"
+              [style.backgroundImage]="'url(' + (vehicles()[0]?.imageUrl ?? '') + ')'"
+            >
+              <span
+                class="status-chip"
+                [class.approved]="simulation.status === 'Pre-aprobado'"
+                [class.pending]="simulation.status === 'Pendiente'"
+                [class.expired]="simulation.status === 'Expirado'"
+                >{{ simulation.status }}</span
+              >
+            </div>
+            <div class="card-body">
+              <h3>{{ simulation.vehicleName }}</h3>
+              <p>{{ simulation.createdAt | date: 'dd MMM yyyy' }} - {{ simulation.entityName }}</p>
+              <div class="card-metrics">
+                <span
+                  ><small>Cuota mensual</small
+                  ><strong>{{
+                    simulation.result.monthlyInstallment
+                      | currency: simulation.currency : 'symbol-narrow' : '1.0-0'
+                  }}</strong></span
+                >
+                <span
+                  ><small>Plazo</small><strong>{{ simulation.termMonths }} meses</strong></span
+                >
+              </div>
+              <a mat-stroked-button [routerLink]="['/results', simulation.id]">Ver detalles</a>
+            </div>
+          </article>
+        } @empty {
+          <div class="empty-state">
+            <mat-icon>directions_car</mat-icon>
+            <h3>Aun no tienes simulaciones</h3>
+            <p>Crea tu primer escenario de Compra Inteligente para ver cronograma, VAN y TIR.</p>
+            <a mat-flat-button color="primary" routerLink="/simulator">Empezar</a>
+          </div>
+        }
+      </div>
+    </section>
+
+    <aside class="panel checklist">
+      <h2 class="section-title">Ruta de solicitud</h2>
+      <div class="step done">
+        <mat-icon>check_circle</mat-icon>
+        <div><strong>Perfil registrado</strong><span>DNI, ingresos y contacto.</span></div>
+      </div>
+      <div class="step done">
+        <mat-icon>check_circle</mat-icon>
+        <div><strong>Simulacion financiera</strong><span>Metodo frances y seguros.</span></div>
+      </div>
+      <div class="step done">
+        <mat-icon>check_circle</mat-icon>
+        <div><strong>Oferta vehicular</strong><span>Moneda, entidad, tasa y plazo.</span></div>
+      </div>
+      <div class="step">
+        <mat-icon>account_balance</mat-icon>
+        <div><strong>Evaluacion bancaria</strong><span>Listo para integracion backend.</span></div>
+      </div>
+    </aside>
+  </div>
+</section>

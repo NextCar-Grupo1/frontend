@@ -1,0 +1,65 @@
+<section class="auth-page">
+  <div class="auth-visual">
+    <div class="brand-row">
+      <span class="brand-icon"><mat-icon>directions_car</mat-icon></span>
+      <strong>NextCar</strong>
+    </div>
+    <div class="visual-copy">
+      <span class="eyebrow">Compra Inteligente</span>
+      <h1>Impulsa tu proximo vehiculo con una decision financiera clara.</h1>
+      <p>Simula cuotas, seguros, VAN, TIR y cronogramas antes de enviar tu solicitud.</p>
+    </div>
+  </div>
+
+  <div class="auth-panel">
+    <div class="auth-card">
+      <span class="mini-icon"><mat-icon>lock</mat-icon></span>
+      <h2>Bienvenido de nuevo</h2>
+      <p>Ingresa tus credenciales para gestionar tus simulaciones previas o crear una nueva.</p>
+
+      <form [formGroup]="form" (ngSubmit)="submit()">
+        <mat-form-field appearance="outline">
+          <mat-label>Email o usuario</mat-label>
+          <mat-icon matPrefix>mail</mat-icon>
+          <input matInput formControlName="email" type="email" autocomplete="email" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline">
+          <mat-label>Contrasena</mat-label>
+          <mat-icon matPrefix>key</mat-icon>
+          <input matInput formControlName="password" [type]="showPassword ? 'text' : 'password'" autocomplete="current-password" />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            [attr.aria-label]="showPassword ? 'Ocultar contrasena' : 'Mostrar contrasena'"
+            [matTooltip]="showPassword ? 'Ocultar contrasena' : 'Mostrar contrasena'"
+            (click)="togglePasswordVisibility()"
+          >
+            <mat-icon>{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
+        </mat-form-field>
+
+        <div class="form-row">
+          <mat-checkbox formControlName="remember">Recordar mi cuenta</mat-checkbox>
+          <a routerLink="/support">Ayuda</a>
+        </div>
+
+        <button mat-flat-button color="primary" type="submit" [disabled]="loading">
+          <mat-icon>login</mat-icon>
+          Iniciar sesion
+        </button>
+      </form>
+
+      <div class="auth-switch">
+        <span>No tienes una cuenta?</span>
+        <a routerLink="/auth/register">Registrate ahora</a>
+      </div>
+
+      <div class="trust-row">
+        <span><mat-icon>verified_user</mat-icon> Acceso seguro</span>
+        <span><mat-icon>shield</mat-icon> Proteccion de datos</span>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,88 @@
+<section class="profile-page">
+  <header class="page-row">
+    <div>
+      <h1 class="page-title">Mi perfil</h1>
+      <p class="page-lead">Datos personales y perfil financiero para la evaluacion crediticia.</p>
+    </div>
+  </header>
+
+  <form class="panel profile-form" [formGroup]="form" (ngSubmit)="save()">
+    <h2 class="section-title"><mat-icon>person</mat-icon> Datos del usuario</h2>
+
+    <div class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Nombres</mat-label>
+        <input matInput formControlName="firstName" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Apellidos</mat-label>
+        <input matInput formControlName="lastName" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Correo electronico</mat-label>
+        <input matInput formControlName="email" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Telefono</mat-label>
+        <input matInput formControlName="phone" />
+      </mat-form-field>
+    </div>
+
+    <h2 class="section-title"><mat-icon>account_balance</mat-icon> Perfil financiero</h2>
+
+    <div class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Numero de documento</mat-label>
+        <input matInput formControlName="documentNumber" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Direccion</mat-label>
+        <input matInput formControlName="address" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Distrito</mat-label>
+        <input matInput formControlName="district" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Ciudad</mat-label>
+        <input matInput formControlName="city" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Tipo de empleo</mat-label>
+        <mat-select formControlName="employmentType">
+          <mat-option value="DEPENDENT">Dependiente</mat-option>
+          <mat-option value="INDEPENDENT">Independiente</mat-option>
+          <mat-option value="BUSINESS_OWNER">Empresario</mat-option>
+          <mat-option value="RETIRED">Jubilado</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Ocupacion / Cargo</mat-label>
+        <input matInput formControlName="occupation" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Empleador</mat-label>
+        <input matInput formControlName="employer" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Ingreso mensual</mat-label>
+        <input matInput type="number" formControlName="monthlyIncome" />
+      </mat-form-field>
+    </div>
+
+    <button mat-flat-button color="primary" type="submit" [disabled]="loading()">
+      <mat-icon>save</mat-icon>
+      Guardar cambios
+    </button>
+  </form>
+</section>

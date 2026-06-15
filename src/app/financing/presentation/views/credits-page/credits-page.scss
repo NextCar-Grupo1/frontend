@@ -1,0 +1,15 @@
+.credits, .credits-list { display: grid; gap: 1rem; }
+.page-row, .credit-row, .credit-numbers, .row-actions { display: flex; align-items: center; }
+.page-row { justify-content: space-between; gap: 1rem; }
+.credit-row { justify-content: space-between; gap: 1.2rem; padding: 1rem; }
+.credit-main { min-width: 240px; }
+.credit-main h2 { margin: .6rem 0 .2rem; color: var(--nextcar-navy); font-size: 1.1rem; }
+.credit-main p { margin: 0; color: var(--nextcar-muted); }
+.credit-numbers { flex: 1; justify-content: center; gap: clamp(1rem, 4vw, 3rem); }
+.credit-numbers small, .credit-numbers strong { display: block; }
+.credit-numbers small { color: var(--nextcar-muted); }
+.credit-numbers strong { color: var(--nextcar-navy); font-size: 1.2rem; }
+.row-actions { gap: .6rem; flex-wrap: wrap; justify-content: flex-end; }
+.empty { padding: 2rem; text-align: center; }
+.empty mat-icon { color: var(--nextcar-emerald); font-size: 42px; height: 42px; width: 42px; }
+@media (max-width: 880px) { .page-row, .credit-row { align-items: flex-start; flex-direction: column; } .credit-numbers { width: 100%; justify-content: space-between; } }

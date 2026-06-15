@@ -1,0 +1,7 @@
+.profile-page { display: grid; gap: 1rem; }
+.page-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+.profile-form { display: grid; gap: 1rem; padding: 1.2rem; }
+.section-title { display: flex; align-items: center; gap: .55rem; margin: 0; }
+.section-title mat-icon { color: var(--nextcar-emerald); }
+button[type='submit'] { justify-self: start; min-height: 48px; }
+@media (max-width: 760px) { .page-row { align-items: flex-start; flex-direction: column; } }
