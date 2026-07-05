@@ -10,7 +10,7 @@ import {
 import { MATERIAL_IMPORTS } from '../../../../shared/presentation/material/material-imports';
 import { SessionService } from '../../../application/session.service';
 import { ApiRepositoryService } from '../../../../shared/infrastructure/http/api-repository.service';
-
+import { RecaptchaService } from '../../../../shared/infrastructure/recaptcha/recaptcha.service';
 @Component({
   selector: 'app-register-page',
   imports: [CommonModule, ReactiveFormsModule, RouterLink, ...MATERIAL_IMPORTS],
@@ -18,6 +18,7 @@ import { ApiRepositoryService } from '../../../../shared/infrastructure/http/api
   styleUrl: './register-page.scss',
 })
 export class RegisterPage {
+  private readonly recaptcha = inject(RecaptchaService);
   private readonly fb = inject(FormBuilder);
   private readonly session = inject(SessionService);
   private readonly api = inject(ApiRepositoryService);
@@ -43,11 +44,12 @@ export class RegisterPage {
     password: ['', [Validators.required, Validators.minLength(8)]],
     confirmPassword: ['', Validators.required],
     terms: [false, Validators.requiredTrue],
+    
   });
 
   loading = false;
 
-  submit(): void {
+  async submit(): Promise<void> {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -63,6 +65,19 @@ export class RegisterPage {
 
     this.loading = true;
 
+    let captchaToken: string | undefined;
+    try {
+      captchaToken = await this.recaptcha.execute('signup');
+    } catch {
+      this.loading = false;
+      this.snackBar.open(
+        'No se pudo validar el reCAPTCHA. Recarga la pagina e intenta de nuevo.',
+        'Cerrar',
+        { duration: 4200 },
+      );
+      return;
+    }
+
     // Step 1: Register user in IAM module
     this.session
       .register({
@@ -72,6 +87,7 @@ export class RegisterPage {
         lastName: value.lastName,
         phone: value.phone,
         documentNumber: value.documentNumber || undefined,
+        captchaToken,
       })
       .subscribe({
         next: () => {
@@ -84,7 +100,6 @@ export class RegisterPage {
                 return;
               }
 
-              // Step 3: Create customer profile
               const employmentTypeMap: Record<string, string> = {
                 Dependiente: 'DEPENDENT',
                 Independiente: 'INDEPENDENT',
@@ -119,7 +134,7 @@ export class RegisterPage {
             },
           });
         },
-        error: (err) => {
+        error: () => {
           this.loading = false;
           this.snackBar.open('No se pudo registrar. Revisa que el backend este activo.', 'Cerrar', {
             duration: 4500,
