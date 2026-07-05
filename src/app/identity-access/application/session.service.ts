@@ -1,8 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { map, Observable, of, tap } from 'rxjs';
 import { ApiRepositoryService } from '../../shared/infrastructure/http/api-repository.service';
-import { UserProfile } from '../domain/model/user-profile.model';
-import { UserResource } from '../domain/model/sign-up-request.model';
+import { SignUpRequest, UserResource } from '../domain/model/sign-up-request.model';
 import { storeToken, clearStoredToken } from '../../shared/infrastructure/http/auth.interceptor';
 
 const SESSION_KEY = 'nextcar.session';
@@ -50,14 +49,7 @@ export class SessionService {
   }
 
   /** Register against real Spring Boot backend */
-  register(request: {
-    email: string;
-    password: string;
-    firstName: string;
-    lastName: string;
-    phone?: string;
-    documentNumber?: string;
-  }): Observable<boolean> {
+  register(request: SignUpRequest): Observable<boolean> {
     return this.api.signUp(request).pipe(map(() => true));
   }
 

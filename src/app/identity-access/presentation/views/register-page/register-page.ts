@@ -10,6 +10,7 @@ import {
 import { MATERIAL_IMPORTS } from '../../../../shared/presentation/material/material-imports';
 import { SessionService } from '../../../application/session.service';
 import { ApiRepositoryService } from '../../../../shared/infrastructure/http/api-repository.service';
+import { RecaptchaService } from '../../../application/recaptcha.service';
 
 @Component({
   selector: 'app-register-page',
@@ -21,6 +22,7 @@ export class RegisterPage {
   private readonly fb = inject(FormBuilder);
   private readonly session = inject(SessionService);
   private readonly api = inject(ApiRepositoryService);
+  private readonly recaptcha = inject(RecaptchaService);
   private readonly router = inject(Router);
   private readonly snackBar = inject(MatSnackBar);
   readonly maxBirthDate = todayIsoDate();
@@ -63,68 +65,79 @@ export class RegisterPage {
 
     this.loading = true;
 
-    // Step 1: Register user in IAM module
-    this.session
-      .register({
-        email: value.email,
-        password: value.password,
-        firstName: value.firstName,
-        lastName: value.lastName,
-        phone: value.phone,
-        documentNumber: value.documentNumber || undefined,
-      })
-      .subscribe({
-        next: () => {
-          // Step 2: Auto-login after registration
-          this.session.login(value.email, value.password).subscribe({
-            next: (user) => {
-              if (!user) {
-                this.loading = false;
-                this.router.navigateByUrl('/auth/login');
-                return;
-              }
-
-              // Step 3: Create customer profile
-              const employmentTypeMap: Record<string, string> = {
-                Dependiente: 'DEPENDENT',
-                Independiente: 'INDEPENDENT',
-                Mixto: 'BUSINESS_OWNER',
-              };
-
-              this.api
-                .createCustomerProfile({
-                  documentNumber: value.documentNumber || '',
-                  address: value.address,
-                  district: value.district,
-                  city: value.city,
-                  employmentType: employmentTypeMap[value.employmentType] || 'DEPENDENT',
-                  occupation: value.occupation,
-                  employer: value.employer || '',
-                  monthlyIncome: value.grossMonthlyIncome,
-                })
-                .subscribe({
-                  next: () => {
+    this.recaptcha
+      .execute('signup')
+      .then((captchaToken) => {
+        // Step 1: Register user in IAM module
+        this.session
+          .register({
+            email: value.email,
+            password: value.password,
+            firstName: value.firstName,
+            lastName: value.lastName,
+            phone: value.phone,
+            documentNumber: value.documentNumber || undefined,
+            captchaToken,
+          })
+          .subscribe({
+            next: () => {
+              // Step 2: Auto-login after registration
+              this.session.login(value.email, value.password).subscribe({
+                next: (user) => {
+                  if (!user) {
                     this.loading = false;
-                    this.router.navigateByUrl('/dashboard');
-                  },
-                  error: () => {
-                    this.loading = false;
-                    this.router.navigateByUrl('/dashboard');
-                  },
-                });
+                    this.router.navigateByUrl('/auth/login');
+                    return;
+                  }
+
+                  // Step 3: Create customer profile
+                  const employmentTypeMap: Record<string, string> = {
+                    Dependiente: 'DEPENDENT',
+                    Independiente: 'INDEPENDENT',
+                    Mixto: 'BUSINESS_OWNER',
+                  };
+
+                  this.api
+                    .createCustomerProfile({
+                      documentNumber: value.documentNumber || '',
+                      address: value.address,
+                      district: value.district,
+                      city: value.city,
+                      employmentType: employmentTypeMap[value.employmentType] || 'DEPENDENT',
+                      occupation: value.occupation,
+                      employer: value.employer || '',
+                      monthlyIncome: value.grossMonthlyIncome,
+                    })
+                    .subscribe({
+                      next: () => {
+                        this.loading = false;
+                        this.router.navigateByUrl('/dashboard');
+                      },
+                      error: () => {
+                        this.loading = false;
+                        this.router.navigateByUrl('/dashboard');
+                      },
+                    });
+                },
+                error: () => {
+                  this.loading = false;
+                  this.router.navigateByUrl('/auth/login');
+                },
+              });
             },
-            error: () => {
+            error: (err) => {
               this.loading = false;
-              this.router.navigateByUrl('/auth/login');
+              this.snackBar.open('No se pudo registrar. Revisa que el backend este activo.', 'Cerrar', {
+                duration: 4500,
+              });
             },
           });
-        },
-        error: (err) => {
-          this.loading = false;
-          this.snackBar.open('No se pudo registrar. Revisa que el backend este activo.', 'Cerrar', {
-            duration: 4500,
-          });
-        },
+      })
+      .catch(() => {
+        this.loading = false;
+        this.snackBar.open('No se pudo validar reCAPTCHA. Intentalo nuevamente.', 'Cerrar', {
+          duration: 4500,
+        });
       });
   }
 }
