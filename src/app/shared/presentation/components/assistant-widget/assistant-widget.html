@@ -1,0 +1,53 @@
+<button
+  mat-fab
+  color="primary"
+  class="assistant-fab"
+  type="button"
+  (click)="assistant.toggle()"
+  [attr.aria-label]="assistant.isOpen() ? 'Cerrar asistente' : 'Abrir asistente de ayuda'"
+>
+  <mat-icon>{{ assistant.isOpen() ? 'close' : 'support_agent' }}</mat-icon>
+</button>
+
+@if (assistant.isOpen()) {
+  <div class="assistant-panel" role="dialog" aria-label="Asistente de ayuda NextCar">
+    <header class="assistant-header">
+      <div>
+        <strong>Asistente NextCar</strong>
+        <span>Preguntas frecuentes al instante</span>
+      </div>
+      <button mat-icon-button type="button" (click)="close()" aria-label="Cerrar">
+        <mat-icon>close</mat-icon>
+      </button>
+    </header>
+
+    <div class="assistant-messages">
+      @for (msg of messages(); track $index) {
+        <div class="msg" [class.msg-user]="msg.from === 'user'" [class.msg-bot]="msg.from === 'bot'">
+          {{ msg.text }}
+        </div>
+      }
+    </div>
+
+    <div class="assistant-suggestions">
+      @for (faq of assistant.faqs; track faq.question) {
+        <button type="button" class="suggestion-chip" (click)="ask(faq.question)">{{ faq.question }}</button>
+      }
+    </div>
+
+    <form class="assistant-input" (ngSubmit)="ask()">
+      <mat-form-field appearance="outline" class="assistant-field">
+        <input
+          matInput
+          placeholder="Escribe tu pregunta..."
+          name="query"
+          [ngModel]="query()"
+          (ngModelChange)="query.set($event)"
+        />
+      </mat-form-field>
+      <button mat-icon-button color="primary" type="submit" aria-label="Enviar">
+        <mat-icon>send</mat-icon>
+      </button>
+    </form>
+  </div>
+}

@@ -1,4 +1,5 @@
 <mat-sidenav-container class="shell">
+
   <mat-sidenav #drawer class="sidebar" [mode]="isMobile() ? 'over' : 'side'" [opened]="!isMobile()">
     <div class="brand">
       <div class="brand-mark">
@@ -9,7 +10,7 @@
         <span>Compra Inteligente</span>
       </div>
     </div>
-
+    <app-assistant-widget />
     <nav class="nav-list" aria-label="Secciones principales">
       @for (item of navItems; track item.route) {
         <a
