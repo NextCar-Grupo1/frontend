@@ -103,7 +103,7 @@ export class SimulatorPage implements OnInit {
     const entity = this.selectedEntity();
     if (!entity) return;
     this.form.patchValue({
-      annualRate: entity.displayName ? 0 : 12.5,
+      annualRate: 12.5,
       debtReliefInsuranceRate: entity.defaultDesgravamenRate * 100,
       vehicleInsuranceMonthly: entity.defaultVehicleInsurance,
       additionalMonthlyCosts: entity.defaultPortes,
@@ -171,8 +171,9 @@ export class SimulatorPage implements OnInit {
   }
 
   selectedVehicle(): Vehicle | undefined {
+    const selectedVehicleId = this.form.controls.vehicleId.value;
     return this.vehicles().find(
-      (vehicle) => String(vehicle.id) === this.form.controls.vehicleId.value,
+      (vehicle) => String(vehicle.id) === String(selectedVehicleId),
     );
   }
 

@@ -22,7 +22,7 @@
             <mat-label>Vehiculo</mat-label>
             <mat-select formControlName="vehicleId" (selectionChange)="onVehicleChange()">
               @for (vehicle of vehicles(); track vehicle.id) {
-                <mat-option [value]="vehicle.id"
+                <mat-option [value]="vehicle.id.toString()"
                   >{{ vehicle.brand }} {{ vehicle.model }} {{ vehicle.year }}</mat-option
                 >
               }
