@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { SessionService } from '../../../../identity-access/application/session.service';
 import { MATERIAL_IMPORTS } from '../../material/material-imports';
-
+import { AssistantWidget } from '../assistant-widget/assistant-widget';
 interface NavItem {
   label: string;
   icon: string;
@@ -14,9 +14,16 @@ interface NavItem {
 
 @Component({
   selector: 'app-shell',
-  imports: [CommonModule, RouterOutlet, RouterLink, RouterLinkActive, ...MATERIAL_IMPORTS],
+  imports: [
+    CommonModule,
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    AssistantWidget,
+    ...MATERIAL_IMPORTS,
+  ],
   templateUrl: './app-shell.html',
-  styleUrl: './app-shell.scss'
+  styleUrl: './app-shell.scss',
 })
 export class AppShell {
   private readonly destroyRef = inject(DestroyRef);
@@ -31,7 +38,7 @@ export class AppShell {
     { label: 'Simulador', icon: 'calculate', route: '/simulator' },
     { label: 'Mis creditos', icon: 'account_balance_wallet', route: '/credits' },
     { label: 'Mi perfil', icon: 'person', route: '/profile' },
-    { label: 'Soporte', icon: 'support_agent', route: '/support' }
+    { label: 'Soporte', icon: 'support_agent', route: '/support' },
   ];
 
   constructor() {

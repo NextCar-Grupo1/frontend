@@ -28,7 +28,9 @@
       <div class="contact-row"><mat-icon>call</mat-icon><span><strong>Banca telefonica</strong> 01 555-0199</span></div>
       <div class="contact-row"><mat-icon>mail</mat-icon><span><strong>Correo institucional</strong> consultas&#64;nextcar.pe</span></div>
       <div class="contact-row"><mat-icon>chat</mat-icon><span><strong>Chat en vivo</strong> Disponible 24/7</span></div>
-      <button mat-flat-button color="primary"><mat-icon>forum</mat-icon>Iniciar chat</button>
+      <button mat-flat-button color="primary" (click)="assistant.open()">
+        <mat-icon>forum</mat-icon>Iniciar chat
+      </button>
     </aside>
   </div>
 </section>
